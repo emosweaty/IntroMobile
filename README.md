@@ -1,50 +1,18 @@
-# Welcome to your Expo app 👋
+## UFO Sighting Map (Basis opdracht)
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+In dit project gaan jullie een react-native ufo sighting map maken. De bedoeling van de app is dat mensen een ufo sighting kunnen melden en dat deze sightings op een kaart worden weergegeven. De UFO sightings kunnen ook worden getoond in een lijst. De gebruiker moet ook de mogelijkheid hebben om een sighting te rapporteren en een foto toe te voegen.
 
-## Get started
+De data voor deze app is afkomstig van https://sampleapis.assimilate.be/ufo/sightings. Deze API bevat een lijst van ufo sightings. 
 
-1. Install dependencies
+Functionaliteiten:
+- De app moet UFO sightings kunnen ophalen van de API en deze op een kaart kunnen weergeven. De sightings moeten klikbaar zijn en de gebruiker moet op de kaart een detailpagina kunnen openen met meer informatie over de sighting.
+- De app moet een lijst van sightings kunnen tonen. De sightings moeten klikbaar zijn en de gebruiker moet op de lijst een detailpagina kunnen openen met meer informatie over de sighting.
+- Er moet een mogelijkheid zijn om een nieuwe sighting te rapporteren. 
+- De gebruiker moet een foto kunnen toevoegen aan de sighting gebruikmakende van de camera van de smartphone. De foto's moeten lokaal worden opgeslagen op het device.
+- De gebruiker moet een de locatie van de sighting kunnen selecteren op een kaart.
+- De sighting mag bijgehouden worden in AsyncStorage (of een andere lokale storage) zodat de sighting niet verloren gaat bij het afsluiten van de app.
 
-   ```bash
-   npm install
-   ```
+Gebruik bij voorkeur de leaflet library voor het tonen van de kaart. De leaflet library is een populaire library voor het tonen van kaarten in webapplicaties. 
 
-2. Start the app
+De applicatie moet werken op web en een mobiel device naar keuze.
 
-   ```bash
-    npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
