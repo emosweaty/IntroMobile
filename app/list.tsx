@@ -1,5 +1,5 @@
-const List = () => {
+import axios from 'axios';
+
+export default function getSightings(){
 
 }
-
-export default List;
