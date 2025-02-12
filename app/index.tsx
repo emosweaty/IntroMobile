@@ -77,16 +77,20 @@ const Index = () => {
 
   async function loadMarkersFromApi() {
     let list = await axios.get("https://sampleapis.assimilate.be/ufo/sightings"); 
-    await console.log(list.data);
     let data = await list.data;
-    data.forEach((e:any) => {
-      addPointOfInterest(e.location.latitude, e.location.longitude, e.witnessName );
+    setPointsOfInterest((prevPoints) => {
+      return [
+        ...prevPoints,
+        ...data.map((e: any) => ({
+          name: e.witnessName || "New Point",
+          location: { latitude: e.location.latitude, longitude: e.location.longitude },
+        })),
+      ];
     });
   }
   
   const addPointOfInterest = (lat: number, lng: number, name?: string) => {
     if(name==null) name="New Point";
-    console.log(name)
     setPointsOfInterest([...pointsOfInterest, {name: name, location: {latitude: lat, longitude: lng}}]);
   }
 
