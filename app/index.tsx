@@ -5,6 +5,7 @@ import 'leaflet/dist/leaflet.css';
 import L, { LatLngTuple } from "leaflet";
 import { View, Text } from "react-native";
 import { useState } from "react";
+import axios from "axios";
 
 const position: LatLngTuple = [51.505, -0.09];
 
@@ -15,7 +16,7 @@ interface PointOfInterest {
     longitude: number;
   };
 }
-
+let number=0;
 
 const POINTS_OF_INTEREST : PointOfInterest[] = [
     {
@@ -74,8 +75,24 @@ const Index = () => {
     popupAnchor: [-3, 0],
   });
 
-  const addPointOfInterest = (lat: number, lng: number) => {
-    setPointsOfInterest([...pointsOfInterest, {name: "New Point", location: {latitude: lat, longitude: lng}}]);
+  async function loadMarkersFromApi() {
+    let list = await axios.get("https://sampleapis.assimilate.be/ufo/sightings"); 
+    await console.log(list.data);
+    let data = await list.data;
+    data.forEach((e:any) => {
+      addPointOfInterest(e.location.latitude, e.location.longitude, e.witnessName );
+    });
+  }
+  
+  const addPointOfInterest = (lat: number, lng: number, name?: string) => {
+    if(name==null) name="New Point";
+    console.log(name)
+    setPointsOfInterest([...pointsOfInterest, {name: name, location: {latitude: lat, longitude: lng}}]);
+  }
+
+  if(number==0) {
+    loadMarkersFromApi();
+    number++;
   }
 
   return (
@@ -88,7 +105,7 @@ const Index = () => {
     >
 
       <TileLayer
-        // attribution='&copy; <a href="https://www.openstreretmap.org/copyright">OpenStreetMap</a> contributors'
+        //attribution='&copy; <a href="https://www.openstreretmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       <LocationHandler addMarker={(lat, lng) => addPointOfInterest(lat,lng)} />
