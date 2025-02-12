@@ -82,7 +82,7 @@ const Index = () => {
     <MapContainer
       center={{ lat: 51.505, lng: -0.09 }}
       zoom={13}
-      scrollWheelZoom={false}
+      scrollWheelZoom={true}
       style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0 }}
       attributionControl={false}
     >
