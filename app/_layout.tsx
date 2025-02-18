@@ -10,7 +10,22 @@ export default function RootLayout() {
             title: 'Map',
             tabBarIcon: ({ color, size }) => <MaterialCommunityIcons name="home" color={color} size={size} />
           }}
-        />
+          />
+
+          <Tabs.Screen
+            name='sightingsList'
+            options={{
+              title: "Sightings List",
+              tabBarIcon: ({color, size}) => <MaterialCommunityIcons name='ufo-outline' color={color} size={size}/>
+            }}
+          />
+
+          <Tabs.Screen
+            name='[sighting]'
+            options={{
+              href: null
+            }}
+          />
       </Tabs>
   )
 }

@@ -3,9 +3,10 @@
 import { MapContainer, Marker, Popup, SVGOverlay, TileLayer, useMap, useMapEvents } from "react-leaflet";
 import 'leaflet/dist/leaflet.css';
 import L, { LatLngTuple } from "leaflet";
-import { View, Text } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { Link } from "expo-router";
 
 const position: LatLngTuple = [51.505, -0.09];
 
@@ -118,8 +119,17 @@ const Index = () => {
       {pointsOfInterest.map((point, index) => (
         <Marker key={index} position={[point.location.latitude, point.location.longitude]} icon={iconX}>
           <Popup >
-             <View style={{backgroundColor: 'white', padding: 10, width: 100}}>
-                <Text>{point.name}</Text>
+            <View style={{backgroundColor: 'white', padding: 10, width: 100}}>
+              
+              <Link href={{
+                pathname: "/[sighting]",
+               params: {sighting: `${point.name}`}
+              }} asChild>
+                <Pressable>
+                  <Text style={{textDecorationLine: "underline"}}>{point.name}</Text>
+                </Pressable>
+              </Link>
+
              </View>
           </Popup>
         </Marker>

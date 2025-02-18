@@ -1,8 +1,9 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, FlatList } from 'react-native';
+import { StyleSheet, View, Text, FlatList, Pressable } from 'react-native';
 
 import getSightings from "../services/getSightingsService";
+import { Link } from 'expo-router';
 
 interface Sighting {
     id: string
@@ -35,7 +36,14 @@ export default function List(){
     function renderSighting({ item }: { item: Sighting }){
         return(
             <View style={styles.item}>
-                <Text style={styles.product}> {item.witnessName} | {item.location.latitude}, {item.location.longitude} | {item.description} | {item.status}</Text>
+                <Link href={{
+                    pathname: "/[sighting]",
+                    params: {sighting: `${item.witnessName}`}
+                }} asChild>
+                    <Pressable>
+                        <Text style={styles.product}> {item.witnessName} | {item.location.latitude}, {item.location.longitude} | {item.description} | {item.status}</Text>
+                    </Pressable>
+                </Link>
             </View>
         )
     }
