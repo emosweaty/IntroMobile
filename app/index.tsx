@@ -7,10 +7,12 @@ import { View, Text, Pressable } from "react-native";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "expo-router";
+import getSightings from "@/services/getSightingsService";
 
 const position: LatLngTuple = [51.505, -0.09];
 
 interface PointOfInterest {
+  id: number;
   name: string;
   location: {
     latitude: number;
@@ -79,12 +81,13 @@ const Index = () => {
   });
 
   async function loadMarkersFromApi() {
-    let list = await axios.get("https://sampleapis.assimilate.be/ufo/sightings"); 
-    let data = await list.data;
+    //let list = await axios.get("https://sampleapis.assimilate.be/ufo/sightings"); 
+    let data = await getSightings();// await list.data;
     setPointsOfInterest((prevPoints) => {
       return [
         ...prevPoints,
         ...data.map((e: any) => ({
+          id: e.id || 0,
           name: e.witnessName || "New Point",
           location: { latitude: e.location.latitude, longitude: e.location.longitude },
         })),
@@ -92,9 +95,10 @@ const Index = () => {
     });
   }
   
-  const addPointOfInterest = (lat: number, lng: number, name?: string) => {
+  const addPointOfInterest = (lat: number, lng: number, id?: number, name?: string) => {
     if(name==null) name="New Point";
-    setPointsOfInterest([...pointsOfInterest, {name: name, location: {latitude: lat, longitude: lng}}]);
+    if(id==null) id=0;
+    setPointsOfInterest([...pointsOfInterest, {id: id, name: name, location: {latitude: lat, longitude: lng}}]);
   }
 
   if(number==0) {
@@ -123,7 +127,7 @@ const Index = () => {
               
               <Link href={{
                 pathname: "/[sighting]",
-               params: {sighting: `${point.name}`}
+                params: {sighting: `${point.id}`}
               }} asChild>
                 <Pressable>
                   <Text style={{textDecorationLine: "underline"}}>{point.name}</Text>

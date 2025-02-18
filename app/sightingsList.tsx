@@ -6,7 +6,7 @@ import getSightings from "../services/getSightingsService";
 import { Link } from 'expo-router';
 
 interface Sighting {
-    id: string
+    id: number
     witnessName: string;
     location: {
         latitude: string;
@@ -38,7 +38,7 @@ export default function List(){
             <View style={styles.item}>
                 <Link href={{
                     pathname: "/[sighting]",
-                    params: {sighting: `${item.witnessName}`}
+                    params: {sighting: `${item.id}`}
                 }} asChild>
                     <Pressable>
                         <Text style={styles.product}> {item.witnessName}</Text>
@@ -53,7 +53,7 @@ export default function List(){
             <FlatList
                 data={sightings}
                 renderItem={renderSighting}
-                keyExtractor={(item)=> item.id}
+                keyExtractor={(item)=> item.id.toString()}
             >    
             </FlatList>
         </View>

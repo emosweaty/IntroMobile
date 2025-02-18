@@ -21,15 +21,13 @@ interface Sighting {
 export default function details(){
     const { sighting } = useLocalSearchParams<{sighting: string}>();
     const [ detail, setDetail ] = useState<Sighting>(); 
-
     useEffect(()=>{
-            fetchSightings()
-        }, []);
-
-    async function fetchSightings() {
+        fetchSightings(sighting);
+    }, [sighting]);
+    async function fetchSightings(sighting: string) {
         try {
             const data = await getSightings(); 
-            const found = data.find((item: Sighting) => item.witnessName === sighting);
+            const found = data.find((item: Sighting) => item.id == sighting);
             setDetail(found); 
         } catch (err) {
             console.error("Failed to fetch sightings", err);
@@ -38,7 +36,7 @@ export default function details(){
 
     return(
         <View>
-            <Stack.Screen options={{title: sighting}}></Stack.Screen>
+            <Stack.Screen options={{title: detail?.witnessName}}></Stack.Screen>
             <Text>Location: {detail?.location.latitude}, {detail?.location.longitude}</Text>
             <Text>Description: {detail?.description}</Text>
             <Text>Status: {detail?.status}</Text>
