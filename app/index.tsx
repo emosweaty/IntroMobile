@@ -4,7 +4,7 @@ import { MapContainer, Marker, Popup, SVGOverlay, TileLayer, useMap, useMapEvent
 import 'leaflet/dist/leaflet.css';
 import L, { LatLngTuple } from "leaflet";
 import { View, Text } from "react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 
 const position: LatLngTuple = [51.505, -0.09];
@@ -18,7 +18,9 @@ interface PointOfInterest {
 }
 let number=0;
 
-const POINTS_OF_INTEREST : PointOfInterest[] = [
+let POINTS_OF_INTEREST : PointOfInterest[] = [];
+
+/*const POINTS_OF_INTEREST : PointOfInterest[] = [
     {
       name: "AP Hogeschool",
       location: {
@@ -47,7 +49,7 @@ const POINTS_OF_INTEREST : PointOfInterest[] = [
         longitude: -74.0445
       }
     }
-];
+];*/
 
 interface LocationHandlerProps {
   addMarker: (lat: number, lng: number) => void;
