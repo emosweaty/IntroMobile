@@ -41,7 +41,7 @@ export default function List(){
                     params: {sighting: `${item.witnessName}`}
                 }} asChild>
                     <Pressable>
-                        <Text style={styles.product}> {item.witnessName} | {item.location.latitude}, {item.location.longitude} | {item.description} | {item.status}</Text>
+                        <Text style={styles.product}> {item.witnessName}</Text>
                     </Pressable>
                 </Link>
             </View>
