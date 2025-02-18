@@ -2,32 +2,22 @@ import { Stack, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { View, StyleSheet, Text } from "react-native";
 
-import getSightings from "../services/getSightingsService";
-
-interface Sighting {
-    id: string
-    witnessName: string;
-    location: {
-        latitude: string;
-        longitude: string;
-    }
-    description: string;
-    status: string;
-
-}
+import {useSightings, Sighting} from "../services/getSightingsService";
 
 //TODO kan dit korter?
 
 export default function details(){
     const { sighting } = useLocalSearchParams<{sighting: string}>();
     const [ detail, setDetail ] = useState<Sighting>(); 
+    const { sightings, addSighting } = useSightings();
+
+
     useEffect(()=>{
         fetchSightings(sighting);
     }, [sighting]);
     async function fetchSightings(sighting: string) {
         try {
-            const data = await getSightings(); 
-            const found = data.find((item: Sighting) => item.id == sighting);
+            const found = sightings.find((item: Sighting) => item.id.toString() == sighting);
             setDetail(found); 
         } catch (err) {
             console.error("Failed to fetch sightings", err);

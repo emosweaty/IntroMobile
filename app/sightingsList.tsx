@@ -2,36 +2,11 @@ import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, FlatList, Pressable } from 'react-native';
 
-import getSightings from "../services/getSightingsService";
+import {useSightings, Sighting} from "../services/getSightingsService";
 import { Link } from 'expo-router';
 
-interface Sighting {
-    id: number
-    witnessName: string;
-    location: {
-        latitude: string;
-        longitude: string;
-    }
-    description: string;
-    status: string;
-
-}
-
 export default function List(){
-    const [ sightings, setSightings ] = useState<Sighting[]>([]); 
-
-    useEffect(()=>{
-        fetchSightings()
-    }, []);
-
-    async function fetchSightings() {
-        try {
-            const data = await getSightings(); 
-            setSightings(data); 
-        } catch (err) {
-            console.error("Failed to fetch sightings", err);
-        }
-    }
+    const { sightings, addSighting } = useSightings(); 
 
     function renderSighting({ item }: { item: Sighting }){
         return(
@@ -54,6 +29,7 @@ export default function List(){
                 data={sightings}
                 renderItem={renderSighting}
                 keyExtractor={(item)=> item.id.toString()}
+                extraData={sightings}
             >    
             </FlatList>
         </View>
