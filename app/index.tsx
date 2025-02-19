@@ -17,7 +17,7 @@ const Index = () => {
   const [pointsOfInterest, setPointsOfInterest] = useState<Sighting[]>([]);
   const [formVisible, setFormVisible] = useState(false);
   const [formLocation, setFormLocation] = useState<Location>();
-  const [formData, setFormData] = useState({ name: "", description: "" });
+  const [formData, setFormData] = useState({ name: "", description: "", status: "" });
 
   const { sightings, addSighting } = useSightings();
 
@@ -31,16 +31,19 @@ const Index = () => {
       setPointsOfInterest(sightings.map((e: Sighting) => ({
         id: e.id || 0,
         witnessName: e.witnessName || "New Point",
-        location: { latitude: e.location.latitude, longitude: e.location.longitude },
+        location: { latitude: e.location.latitude, longitude: e.location.longitude }
       })));
     }
     loadMarkers();
   }, [sightings]);
 
-  const addPointOfInterest = (lat: number, lng: number, name = "New Point") => {
+  const addPointOfInterest = (lat: number, lng: number, name = "New Point", description = "niks", status ="unconfirmed") => {
+    console.log(status);
     const newSighting = {
       id: pointsOfInterest.length + 1,
       witnessName: name,
+      description: description,
+      status:status,
       location: { latitude: lat, longitude: lng }
     };
     setPointsOfInterest([...pointsOfInterest,  newSighting]);
@@ -62,9 +65,9 @@ const Index = () => {
   const handleSubmit = (e: any) => {
     e.preventDefault();
     if (formLocation && formLocation.lat && formLocation.lng) {
-      addPointOfInterest(formLocation.lat, formLocation.lng, formData.name);
+      addPointOfInterest(formLocation.lat, formLocation.lng, formData.name, formData.description, formData.status);
 
-      setFormData({ name: "", description: "" });
+      setFormData({ name: "", description: "", status: "" });
     }
   };
 
@@ -100,6 +103,15 @@ const Index = () => {
                   type="text"
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  />
+              </label>
+              <br />
+              <label>
+                Confirmed:
+                <input
+                  type="checkbox"
+                  value={formData.status}
+                  onChange={(e) => setFormData({ ...formData, status: e.target.checked ? "confirmed" : "unconfirmed" })}
                   />
               </label>
               <br />
