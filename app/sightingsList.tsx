@@ -32,7 +32,6 @@ export default function List(){
                 data={sightings}
                 renderItem={renderSighting}
                 keyExtractor={(item)=> item.id.toString()}
-                extraData={sightings}
             >    
             </FlatList>
         </View>

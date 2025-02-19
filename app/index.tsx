@@ -4,7 +4,7 @@ import { MapContainer, Marker, Popup, TileLayer, useMapEvents } from "react-leaf
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { useState, useEffect } from "react";
-import { View, Text, Pressable } from "react-native";
+import { View, Text, Pressable, StyleSheet, Button } from "react-native";
 import { Link } from "expo-router";
 import {useSightings, Sighting} from "./SightingContext";
 
@@ -31,6 +31,8 @@ const Index = () => {
       setPointsOfInterest(sightings.map((e: Sighting) => ({
         id: e.id || 0,
         witnessName: e.witnessName || "New Point",
+        description: e.description,
+        status: e.status,
         location: { latitude: e.location.latitude, longitude: e.location.longitude }
       })));
     }
@@ -86,36 +88,39 @@ const Index = () => {
       {formVisible && formLocation && (
         <Marker position={[formLocation.lat, formLocation.lng]} icon={iconX}>
           <Popup>
-            <form onSubmit={handleSubmit}>
+            <form style={styles.form} onSubmit={handleSubmit}>
               <label>
                 Name:
+              </label>
                 <input
+                  style={styles.input}
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   required
                   />
-              </label>
-              <br />
               <label>
                 Description:
-                <input
-                  type="text"
+              </label>
+                <textarea
+                  style={{ ...styles.input, width: "100%", height: 60, maxHeight: "100px", overflowY: "auto", resize: "none", wordWrap: "break-word" }}
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   />
-              </label>
-              <br />
               <label>
                 Confirmed:
                 <input
+                style={styles.input}
                   type="checkbox"
-                  value={formData.status}
-                  onChange={(e) => setFormData({ ...formData, status: e.target.checked ? "confirmed" : "unconfirmed" })}
+                  checked={formData.status === "confirmed"}
+                  onChange={(e) => setFormData({ 
+                    ...formData, 
+                    status: e.target.checked ? "confirmed" : "unconfirmed" 
+                  })}
                   />
               </label>
               <br />
-              <button type="submit">Add</button>
+              <button style={{...styles.button, border: 'none'}} type="submit">Add</button>
             </form>
           </Popup>
         </Marker>
@@ -125,7 +130,9 @@ const Index = () => {
       {pointsOfInterest.map((point) => (
         <Marker key={point.id} position={[point.location.latitude, point.location.longitude]} icon={iconX}>
           <Popup>
-            <View style={{ backgroundColor: "white", padding: 10, width: 100 }}>
+            <View style={{ backgroundColor: "white", padding: 10, width: 150}}>
+              <Text style={{cursor: "pointer", fontWeight: 'bold'}}>{point.witnessName}</Text>
+              <Text style={{marginTop: 5}}>{point.description}</Text>
               <Link
                 href={{
                   pathname: "/[sighting]",
@@ -134,9 +141,10 @@ const Index = () => {
                 asChild
                 >
                 <Pressable>
-                  <Text style={{ textDecorationLine: "underline" }}>{point.witnessName}</Text>
+                  <Text style={styles.button}>More</Text>
                 </Pressable>
               </Link>
+                
             </View>
           </Popup>
         </Marker>
@@ -146,3 +154,27 @@ const Index = () => {
 };
 
 export default Index;
+
+const styles = StyleSheet.create({
+  form:{
+    maxWidth: 150
+  },
+  input: {
+    borderRadius: '0.8rem',
+    borderWidth: 1.5,
+    marginTop: 3,
+    marginBottom: 3,
+    maxWidth: 140
+ },
+ button:{
+    backgroundColor: 'red',
+    color: 'white',
+    borderRadius: '0.8rem',
+    width: 50,
+    height: 25,
+    textAlign: 'center',
+    fontWeight: '500',
+    paddingTop: 1,
+    marginTop: 10,
+ }
+})

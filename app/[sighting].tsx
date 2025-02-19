@@ -25,11 +25,14 @@ export default function details(){
     }
 
     return(
-        <View>
+        <View style={{marginLeft: 25, marginTop: 10}}>
             <Stack.Screen options={{title: detail?.witnessName}}></Stack.Screen>
-            <Text>Location: {detail?.location.latitude}, {detail?.location.longitude}</Text>
-            <Text>Description: {detail?.description}</Text>
-            <Text>Status: {detail?.status}</Text>
+            <Text style={styles.title}>Description</Text>
+            <Text style={styles.text}>{detail?.description}</Text>
+            <Text style={styles.title}>Location</Text>
+            <Text style={styles.text}>{detail?.location.latitude}, {detail?.location.longitude}</Text>
+            <Text style={styles.title}>Status</Text>
+            <Text style={styles.text}>{detail?.status}</Text>
         </View>
     )
 }
@@ -49,4 +52,14 @@ export default function details(){
         product: {
             fontSize: 18,
         },
+        title: {
+            fontSize: 20,
+            fontWeight: 700,
+            paddingTop: 20,
+            paddingBottom: 5,
+            color: 'red'
+        },
+        text:{
+            paddingLeft: 15
+        }
 });

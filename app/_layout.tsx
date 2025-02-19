@@ -5,12 +5,18 @@ import { SightingsProvider } from './SightingContext';
 export default function RootLayout() {
   return (
     <SightingsProvider>
-      <Tabs>
+      <Tabs
+        screenOptions={{
+          tabBarActiveTintColor: 'orange',
+          headerStyle: {backgroundColor: 'red'},
+          headerTintColor: 'white'
+        }}
+      >
         <Tabs.Screen
           name="index"
           options={{
             title: 'Map',
-            tabBarIcon: ({ color, size }) => <MaterialCommunityIcons name="home" color={color} size={size} />
+            tabBarIcon: ({ size }) => <MaterialCommunityIcons name="home" color='red' size={size} />
           }}
           />
 
@@ -18,7 +24,7 @@ export default function RootLayout() {
             name='sightingsList'
             options={{
               title: "Sightings List",
-              tabBarIcon: ({color, size}) => <MaterialCommunityIcons name='ufo-outline' color={color} size={size}/>
+              tabBarIcon: ({size}) => <MaterialCommunityIcons name='ufo-outline' color='red' size={size}/>
             }}
             />
 
