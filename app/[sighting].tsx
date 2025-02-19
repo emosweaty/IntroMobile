@@ -2,7 +2,7 @@ import { Stack, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { View, StyleSheet, Text } from "react-native";
 
-import {useSightings, Sighting} from "../services/getSightingsService";
+import {useSightings, Sighting} from "./SightingContext";
 
 //TODO kan dit korter?
 

@@ -1,8 +1,10 @@
 import { Tabs } from 'expo-router';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { SightingsProvider } from './SightingContext';
 
 export default function RootLayout() {
   return (
+    <SightingsProvider>
       <Tabs>
         <Tabs.Screen
           name="index"
@@ -18,14 +20,15 @@ export default function RootLayout() {
               title: "Sightings List",
               tabBarIcon: ({color, size}) => <MaterialCommunityIcons name='ufo-outline' color={color} size={size}/>
             }}
-          />
+            />
 
           <Tabs.Screen
             name='[sighting]'
             options={{
               href: null
             }}
-          />
+            />
       </Tabs>
+    </SightingsProvider>
   )
 }

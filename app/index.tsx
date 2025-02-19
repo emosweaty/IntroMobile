@@ -6,7 +6,7 @@ import L from "leaflet";
 import { useState, useEffect } from "react";
 import { View, Text, Pressable } from "react-native";
 import { Link } from "expo-router";
-import {useSightings, Sighting} from "@/services/getSightingsService";
+import {useSightings, Sighting} from "./SightingContext";
 
 interface Location {
   lat: number;
@@ -75,7 +75,7 @@ const Index = () => {
       scrollWheelZoom={true}
       style={{ width: "100%", height: "100%", position: "absolute", top: 0, left: 0 }}
       attributionControl={false}
-    >
+      >
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
       <LocationHandler />
 
@@ -91,7 +91,7 @@ const Index = () => {
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   required
-                />
+                  />
               </label>
               <br />
               <label>
@@ -100,7 +100,7 @@ const Index = () => {
                   type="text"
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                />
+                  />
               </label>
               <br />
               <button type="submit">Add</button>
@@ -120,7 +120,7 @@ const Index = () => {
                   params: { sighting: `${point.id}` },
                 }}
                 asChild
-              >
+                >
                 <Pressable>
                   <Text style={{ textDecorationLine: "underline" }}>{point.witnessName}</Text>
                 </Pressable>

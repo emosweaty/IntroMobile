@@ -2,12 +2,15 @@ import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, FlatList, Pressable } from 'react-native';
 
-import {useSightings, Sighting} from "../services/getSightingsService";
+import {useSightings, Sighting} from "./SightingContext";
 import { Link } from 'expo-router';
 
 export default function List(){
-    const { sightings, addSighting } = useSightings(); 
-
+    let {sightings, addSighting} = useSightings(); 
+    useEffect(() => {
+        console.log(sightings);
+    }, [useSightings().sightings]);
+    
     function renderSighting({ item }: { item: Sighting }){
         return(
             <View style={styles.item}>
