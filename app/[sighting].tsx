@@ -25,10 +25,10 @@ export default function details(){
     }
 
     return(
-        <View style={{marginLeft: 25, marginTop: 10}}>
-            <Stack.Screen options={{title: detail?.witnessName}}></Stack.Screen>
+        <View style={styles.container}>
+            <Text style={{...styles.title, fontSize: 32, fontWeight: 800, letterSpacing: 1.5}}>{detail?.witnessName}</Text>
             <Text style={styles.title}>Description</Text>
-            <Text style={styles.text}>{detail?.description}</Text>
+            <Text style={{...styles.text, fontStyle: 'italic'}}>"{detail?.description}"</Text>
             <Text style={styles.title}>Location</Text>
             <Text style={styles.text}>{detail?.location.latitude}, {detail?.location.longitude}</Text>
             <Text style={styles.title}>Status</Text>
@@ -37,29 +37,25 @@ export default function details(){
     )
 }
 
+
  const styles = StyleSheet.create({
-        container: {
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-            paddingTop: 50,
-        },
-        item: {
-            padding: 10,
-            borderBottomWidth: 1,
-            borderBottomColor: "#ddd",
-        },
-        product: {
-            fontSize: 18,
-        },
         title: {
             fontSize: 20,
             fontWeight: 700,
-            paddingTop: 20,
+            paddingTop: 25,
             paddingBottom: 5,
             color: 'red'
         },
         text:{
-            paddingLeft: 15
+            paddingLeft: 15,
+        },
+        container:{
+            backgroundColor: 'white',
+            padding: 20,
+            paddingLeft: 30,
+            paddingRight: 30,
+            borderRadius: '0.8rem',
+            margin: 40,
+            paddingBottom: 40
         }
 });

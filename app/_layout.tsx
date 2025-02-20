@@ -9,7 +9,11 @@ export default function RootLayout() {
         screenOptions={{
           tabBarActiveTintColor: 'orange',
           headerStyle: {backgroundColor: 'red'},
-          headerTintColor: 'white'
+          headerTintColor: 'white',
+          headerTitle: "UFO Sightings",
+          headerTitleAlign: "center",
+          headerTitleStyle: {fontWeight: 700, letterSpacing: 1.5},
+          tabBarActiveBackgroundColor: '#F0F0F0',
         }}
       >
         <Tabs.Screen
