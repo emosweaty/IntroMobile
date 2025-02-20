@@ -71,27 +71,28 @@ export default function List(){
             borderBottomWidth: 1,
             borderBottomColor: "#ddd",
             backgroundColor: 'white',
-            borderRadius: '0.8rem'
+            borderRadius: 15
         },
         name: {
             fontSize: 18,
             color: 'white',
             textAlign: 'center',
             fontWeight: 600,
-            paddingTop: 2,
-            
         },
         button:{
             backgroundColor: 'red',
-            width: '25%',
+            width: '55%',
             height: 30,
-            borderRadius: '0.8rem',
+            borderRadius: 15,
             marginBottom: 10,
+            alignItems: 'center',
+            justifyContent: 'center'
         },
         hover:{
-            width: '24%',
+            width: '54%',
             height: 29,
-            margin: 1
+            margin: 1,
+            backgroundColor: 'orange'
 
         },
         hovertext:{

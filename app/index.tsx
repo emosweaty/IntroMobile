@@ -4,8 +4,9 @@ import { MapContainer, Marker, Popup, TileLayer, useMapEvents } from "react-leaf
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { useState, useEffect } from "react";
-import { View, Text, Pressable, StyleSheet, Button } from "react-native";
+import { View, Text, Pressable, StyleSheet } from "react-native";
 import { Link } from "expo-router";
+
 import {useSightings, Sighting} from "./SightingContext";
 
 interface Location {
@@ -131,7 +132,7 @@ const Index = () => {
         <Marker key={point.id} position={[point.location.latitude, point.location.longitude]} icon={iconX}>
           <Popup>
             <View style={{ backgroundColor: "white", padding: 10, width: 150}}>
-              <Text style={{cursor: "pointer", fontWeight: 'bold'}}>{point.witnessName}</Text>
+              <Text style={{fontWeight: 'bold', color: 'red'}}>{point.witnessName}</Text>
               <Text style={{marginTop: 5}}>{point.description}</Text>
               <Link
                 href={{
@@ -160,7 +161,7 @@ const styles = StyleSheet.create({
     maxWidth: 150
   },
   input: {
-    borderRadius: '0.8rem',
+    borderRadius: 15,
     borderWidth: 1.5,
     marginTop: 3,
     marginBottom: 3,
@@ -169,7 +170,7 @@ const styles = StyleSheet.create({
  button:{
     backgroundColor: 'red',
     color: 'white',
-    borderRadius: '0.8rem',
+    borderRadius: 15,
     width: 50,
     height: 25,
     textAlign: 'center',

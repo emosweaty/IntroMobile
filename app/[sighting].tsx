@@ -54,7 +54,7 @@ export default function details(){
             padding: 20,
             paddingLeft: 30,
             paddingRight: 30,
-            borderRadius: '0.8rem',
+            borderRadius: 15,
             margin: 40,
             paddingBottom: 40
         }
