@@ -40,8 +40,8 @@ const Index = () => {
     loadMarkers();
   }, [sightings]);
 
-  const addPointOfInterest = (lat: number, lng: number, name = "New Point", description = "niks", status ="unconfirmed") => {
-    console.log(status);
+  const addPointOfInterest = (lat: number, lng: number, name = "New Point", description = "niks", status ="") => {
+    if(status=="") status="unconfirmed";
     const newSighting = {
       id: pointsOfInterest.length + 1,
       witnessName: name,
