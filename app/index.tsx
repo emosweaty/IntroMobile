@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import MapView, { Marker } from "react-native-maps";
 import { View, Text, Pressable, StyleSheet, TextInput, Button } from "react-native";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 
 import { useSightings, Sighting } from "./SightingContext";
 
@@ -15,7 +15,7 @@ const Index = () => {
   const [formVisible, setFormVisible] = useState(false);
   const [formLocation, setFormLocation] = useState<Location | null>(null);
   const [formData, setFormData] = useState({ name: "", description: "", status: "unconfirmed" });
-
+  const router=useRouter();
   const { sightings, addSighting } = useSightings();
 
   useEffect(() => {
@@ -71,7 +71,12 @@ const Index = () => {
         onPress={handleMapPress}
       >
         {pointsOfInterest.map((point) => (
-          <Marker key={point.id} coordinate={point.location} title={point.witnessName} description={point.description} />
+          <Marker key={point.id} coordinate={point.location} title={point.witnessName} description={point.description} onCalloutPress={() => {
+            router.push({
+              pathname: "/[sighting]",
+              params: { sighting: `${point.id}` },
+            });
+          }} />
         ))}
       </MapView>
 
