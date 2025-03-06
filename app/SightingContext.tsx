@@ -9,6 +9,7 @@ export interface Sighting {
     }
     description?: string;
     status?: string;
+    imageUri?: string;
 }
 interface SightingContextType {
     sightings: Sighting[];

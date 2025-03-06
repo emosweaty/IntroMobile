@@ -41,7 +41,7 @@ export default function List(){
                             params: { sighting: `${item.id}` },
                         })}
                 ></Button>
-                <Text style={{fontStyle: 'italic', paddingLeft: 5}}>"{item.description}"</Text>
+                <Text style={{fontStyle: 'italic', paddingLeft: 15}}>"{item.description}"</Text>
             </View>
         )
     }
@@ -71,7 +71,8 @@ export default function List(){
             borderBottomWidth: 1,
             borderBottomColor: "#ddd",
             backgroundColor: 'white',
-            borderRadius: 15
+            borderRadius: 15,
+            minWidth: 300
         },
         name: {
             fontSize: 18,
