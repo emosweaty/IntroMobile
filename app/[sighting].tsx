@@ -15,7 +15,9 @@ export default function Details() {
 
   async function fetchSightings(sighting: string) {
     try {
-      const found = sightings.find((item: Sighting) => item.id.toString() === sighting);
+      const found = sightings.find(
+        (item: Sighting) => item.id.toString() === sighting
+      );
       setDetail(found);
     } catch (err) {
       console.error("Failed to fetch sightings", err);
@@ -24,17 +26,24 @@ export default function Details() {
 
   return (
     <View style={styles.container}>
-      <Text style={[styles.title, styles.largeTitle]}>{detail?.witnessName}</Text>
+      <Text style={[styles.title, styles.largeTitle]}>
+        {detail?.witnessName}
+      </Text>
       <Text style={styles.title}>Description</Text>
-      <Text style={[styles.text, styles.italicText]}>"{detail?.description}"</Text>
+      <Text style={[styles.text, styles.italicText]}>
+        "{detail?.description}"
+      </Text>
 
       <Text style={styles.title}>Location</Text>
-      <Text style={styles.text}>{detail?.location.latitude}, {detail?.location.longitude}</Text>
+      <Text style={styles.text}>
+        {detail?.location
+          ? `${detail.location.latitude.toFixed(2)}, ${detail.location.longitude.toFixed(2)}`
+          : ""}
+      </Text>
 
       <Text style={styles.title}>Status</Text>
       <Text style={styles.text}>{detail?.status}</Text>
 
-      {/* Show image only if it exists */}
       {detail?.imageUri && (
         <Image source={{ uri: detail.imageUri }} style={styles.image} />
       )}
@@ -72,8 +81,8 @@ const styles = StyleSheet.create({
   },
   image: {
     marginTop: 20,
-    width: "100%", // Full width
-    height: 200, // Adjust height as needed
+    width: "100%",
+    height: 200,
     borderRadius: 10,
     resizeMode: "cover",
   },
