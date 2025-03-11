@@ -1,9 +1,8 @@
-import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, FlatList, Pressable } from 'react-native';
 
 import {useSightings, Sighting} from "./SightingContext";
-import { Link, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 
 export default function List(){
     let {sightings, addSighting} = useSightings(); 
@@ -41,7 +40,7 @@ export default function List(){
                             params: { sighting: `${item.id}` },
                         })}
                 ></Button>
-                <Text style={{fontStyle: 'italic', paddingLeft: 15}}>"{item.description}"</Text>
+                <Text style={{fontFamily: 'arial', fontStyle: 'italic', paddingLeft: 15}}>"{item.description}"</Text>
             </View>
         )
     }
@@ -94,7 +93,6 @@ export default function List(){
             height: 29,
             margin: 1,
             backgroundColor: 'orange'
-
         },
         hovertext:{
             fontSize: 17

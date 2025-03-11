@@ -69,6 +69,7 @@ const styles = StyleSheet.create({
   },
   italicText: {
     fontStyle: "italic",
+    fontFamily: "arial",
   },
   container: {
     backgroundColor: "white",

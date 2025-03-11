@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { View, Text, Pressable, StyleSheet, TextInput, Image, Modal, Animated } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import * as ImagePicker from "expo-image-picker";
+import * as FileSystem from "expo-file-system";
 import { useSightings, Sighting } from "./SightingContext";
 import { FontAwesome } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
@@ -16,12 +17,13 @@ const Index = () => {
   const [selectedSighting, setSelectedSighting] = useState<Sighting | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [formVisible, setFormVisible] = useState(false);
+  const [imagePickerVisible, setImagePickerVisible] = useState(false);
   const [formLocation, setFormLocation] = useState<Location | null>(null);
-  const [formData, setFormData] = useState({ 
-    name: "", 
-    description: "", 
-    status: "unconfirmed", 
-    imageUri: "" 
+  const [formData, setFormData] = useState({
+    name: "",
+    description: "",
+    status: "unconfirmed",
+    imageUri: "",
   });
   const { sightings, addSighting } = useSightings();
   const router = useRouter();
@@ -35,9 +37,9 @@ const Index = () => {
         witnessName: e.witnessName || "New Point",
         description: e.description,
         status: e.status,
-        location: { 
-          latitude: e.location.latitude, 
-          longitude: e.location.longitude 
+        location: {
+          latitude: e.location.latitude,
+          longitude: e.location.longitude,
         },
         imageUri: e.imageUri || "",
       }))
@@ -53,7 +55,7 @@ const Index = () => {
     } else {
       modalScaleAnim.setValue(0.8);
     }
-  }, [modalVisible, modalScaleAnim]);
+  }, [modalVisible]);
 
   useEffect(() => {
     if (formVisible) {
@@ -64,7 +66,7 @@ const Index = () => {
     } else {
       formScaleAnim.setValue(0.8);
     }
-  }, [formVisible, formScaleAnim]);
+  }, [formVisible]);
 
   const handleMapPress = (event: any) => {
     setFormLocation(event.nativeEvent.coordinate);
@@ -88,22 +90,55 @@ const Index = () => {
       };
       setPointsOfInterest([...pointsOfInterest, newSighting]);
       addSighting(newSighting);
-      setFormData({ name: "", description: "", status: "unconfirmed", imageUri: "" });
+      setFormData({
+        name: "",
+        description: "",
+        status: "unconfirmed",
+        imageUri: "",
+      });
       setFormVisible(false);
     }
   };
 
-  const pickImage = async () => {
+  const storeImageLocally = async (uri: string, useCopy: boolean = true): Promise<string> => {
+    const dir = FileSystem.documentDirectory + "sightingImages";
+    const fileName = `${Date.now()}.jpg`;
+    const newPath = `${dir}/${fileName}`;
+    const dirInfo = await FileSystem.getInfoAsync(dir);
+    if (!dirInfo.exists) {
+      await FileSystem.makeDirectoryAsync(dir, { intermediates: true });
+    }
+    if (useCopy) {
+      await FileSystem.copyAsync({ from: uri, to: newPath });
+    } else {
+      await FileSystem.moveAsync({ from: uri, to: newPath });
+    }
+    return newPath;
+  };
+
+  const pickImageFromGallery = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       quality: 1,
     });
     if (!result.canceled) {
-      setFormData({ ...formData, imageUri: result.assets[0].uri });
-    } else {
-      alert("You did not select any image.");
+      const localUri = await storeImageLocally(result.assets[0].uri, true);
+      setFormData({ ...formData, imageUri: localUri });
     }
+    setImagePickerVisible(false);
+  };
+
+  const pickImageFromCamera = async () => {
+    let result = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      quality: 1,
+    });
+    if (!result.canceled) {
+      const localUri = await storeImageLocally(result.assets[0].uri, false);
+      setFormData({ ...formData, imageUri: localUri });
+    }
+    setImagePickerVisible(false);
   };
 
   return (
@@ -119,13 +154,16 @@ const Index = () => {
         onPress={handleMapPress}
       >
         {pointsOfInterest.map((point) => (
-          <Marker 
-            key={point.id} 
-            coordinate={point.location} 
+          <Marker
+            key={point.id}
+            coordinate={point.location}
             onPress={() => handleMarkerPress(point)}
           >
             {point.imageUri ? (
-              <Image source={{ uri: point.imageUri }} style={styles.markerImage} />
+              <Image
+                source={{ uri: point.imageUri }}
+                style={styles.markerImage}
+              />
             ) : null}
           </Marker>
         ))}
@@ -133,21 +171,30 @@ const Index = () => {
 
       <Modal visible={modalVisible} transparent animationType="fade">
         <View style={styles.modalContainer}>
-          <Animated.View style={[styles.modalContent, { transform: [{ scale: modalScaleAnim }] }]}>
-            <Pressable 
-              style={styles.closeButtonCommon} 
+          <Animated.View
+            style={[
+              styles.modalContent,
+              { transform: [{ scale: modalScaleAnim }] },
+            ]}
+          >
+            <Pressable
+              style={styles.closeButtonCommon}
               onPress={() => setModalVisible(false)}
             >
               <Text style={styles.closeButtonText}>X</Text>
             </Pressable>
             {selectedSighting && (
               <>
-                <Text style={styles.modalTitle}>{selectedSighting.witnessName}</Text>
-                <Text  style={styles.description}>"{selectedSighting.description}"</Text>
+                <Text style={styles.modalTitle}>
+                  {selectedSighting.witnessName}
+                </Text>
+                <Text style={styles.description}>
+                  "{selectedSighting.description}"
+                </Text>
                 {selectedSighting.imageUri && (
-                  <Image 
-                    source={{ uri: selectedSighting.imageUri }} 
-                    style={styles.previewImageModal} 
+                  <Image
+                    source={{ uri: selectedSighting.imageUri }}
+                    style={styles.previewImageModal}
                   />
                 )}
                 <Pressable
@@ -168,15 +215,43 @@ const Index = () => {
         </View>
       </Modal>
 
+      <Modal visible={imagePickerVisible} transparent animationType="fade">
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text
+              style={[styles.modalTitle, { color: "red", fontSize: 20, letterSpacing: 1 }]}>
+              Select Image
+            </Text>
+            <View style={styles.buttonContainer}>
+              <Pressable style={styles.button} onPress={pickImageFromCamera}>
+                <FontAwesome name="camera" size={20} color="white" />
+              </Pressable>
+              <Pressable style={styles.button} onPress={pickImageFromGallery}>
+                <FontAwesome name="image" size={20} color="white" />
+              </Pressable>
+            </View>
+            <Pressable
+              style={styles.closeButtonCommon}
+              onPress={() => setImagePickerVisible(false)}
+            >
+              <Text style={styles.closeButtonText}>X</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+
       {formVisible && formLocation && (
-        <Animated.View style={[styles.formContainer, { transform: [{ scale: formScaleAnim }] }]}>
-          <Pressable 
-            style={styles.closeButtonCommon} 
+        <Animated.View
+          style={[styles.formContainer, { transform: [{ scale: formScaleAnim }] }]}
+        >
+          <Pressable
+            style={styles.closeButtonCommon}
             onPress={() => setFormVisible(false)}
           >
             <Text style={styles.closeButtonText}>X</Text>
           </Pressable>
-          <Text style={[styles.modalTitle, { color: "red", fontSize: 20, letterSpacing: 1 }]}>
+          <Text
+            style={[styles.modalTitle,{ color: "red", fontSize: 20, letterSpacing: 1 }]}>
             Add a new sighting
           </Text>
           <Text>Name:</Text>
@@ -189,7 +264,9 @@ const Index = () => {
           <TextInput
             style={[styles.input, { height: 80 }]}
             value={formData.description}
-            onChangeText={(text) => setFormData({ ...formData, description: text })}
+            onChangeText={(text) =>
+              setFormData({ ...formData, description: text })
+            }
             multiline={true}
             numberOfLines={4}
             textAlignVertical="top"
@@ -197,14 +274,12 @@ const Index = () => {
           <View style={styles.checkboxContainer}>
             <Text>Confirmed:</Text>
             <Pressable
-              style={[
-                styles.checkbox,
-                formData.status === "confirmed" ? styles.checked : styles.unchecked,
-              ]}
+              style={[styles.checkbox, formData.status === "confirmed" ? styles.checked : styles.unchecked]}
               onPress={() =>
                 setFormData({
                   ...formData,
-                  status: formData.status === "confirmed" ? "unconfirmed" : "confirmed",
+                  status:
+                    formData.status === "confirmed" ? "unconfirmed" : "confirmed",
                 })
               }
             >
@@ -217,7 +292,10 @@ const Index = () => {
             <Image source={{ uri: formData.imageUri }} style={styles.previewImage} />
           )}
           <View style={styles.buttonContainer}>
-            <Pressable style={styles.button} onPress={pickImage}>
+            <Pressable
+              style={styles.button}
+              onPress={() => setImagePickerVisible(true)}
+            >
               <FontAwesome name="camera" size={20} color="white" />
             </Pressable>
             <Pressable style={styles.button} onPress={handleSubmit}>
@@ -364,8 +442,8 @@ const styles = StyleSheet.create({
     gap: 5,
     marginTop: 5,
   },
-  description:{
-    fontStyle: 'italic',
-    fontFamily: 'arial'
-  }
+  description: {
+    fontStyle: "italic",
+    fontFamily: "arial",
+  },
 });
