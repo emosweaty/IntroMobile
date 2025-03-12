@@ -26,14 +26,12 @@ export default function Details() {
 
   return (
     <View style={styles.container}>
-      <Text style={[styles.title, styles.largeTitle]}>
-        {detail?.witnessName}
-      </Text>
+      <Text style={[styles.title, styles.largeTitle]}>{detail?.witnessName}</Text>
+      <Text style={[styles.text, {paddingLeft: 5}]}>{detail?.witnessContact}</Text>
       <Text style={styles.title}>Description</Text>
-      <Text style={[styles.text, styles.italicText]}>
-        "{detail?.description}"
-      </Text>
-
+      <Text style={[styles.text, styles.italicText]}>"{detail?.description}"</Text>
+      <Text style={styles.title}>Date</Text>
+      <Text style={[styles.text, styles.italicText]}>{new Date(Date.parse(detail?.dateTime!)).toDateString()}</Text>
       <Text style={styles.title}>Location</Text>
       <Text style={styles.text}>
         {detail?.location
@@ -44,8 +42,8 @@ export default function Details() {
       <Text style={styles.title}>Status</Text>
       <Text style={styles.text}>{detail?.status}</Text>
 
-      {detail?.imageUri && (
-        <Image source={{ uri: detail.imageUri }} style={styles.image} />
+      {detail?.picture && (
+        <Image source={{ uri: detail.picture }} style={styles.image} />
       )}
     </View>
   );

@@ -26,9 +26,7 @@ export default function List(){
         );
       };
 
-    useEffect(() => {
-        console.log(sightings);
-    }, [useSightings().sightings]);
+   
     
     function renderSighting({ item }: { item: Sighting }){
         return(

@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
-import { View, Text, Pressable, StyleSheet, TextInput, Image, Modal, Animated } from "react-native";
+import { View,Button, Text, Pressable, StyleSheet, TextInput, Image, Modal, Animated } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
 import { useSightings, Sighting } from "./SightingContext";
 import { FontAwesome } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import DateTimePicker from "@react-native-community/datetimepicker";
+
 
 interface Location {
   latitude: number;
@@ -19,11 +21,23 @@ const Index = () => {
   const [formVisible, setFormVisible] = useState(false);
   const [imagePickerVisible, setImagePickerVisible] = useState(false);
   const [formLocation, setFormLocation] = useState<Location | null>(null);
+  const [date, setDate] = useState(new Date());
+  const [show, setShow] = useState(false);
+
+  const onChange = (event: any, selectedDate: any) => {
+    setShow(false);
+    if (selectedDate) {
+      setDate(selectedDate);
+      setFormData({ ...formData, dateTime: selectedDate })
+    }
+  };
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     status: "unconfirmed",
-    imageUri: "",
+    picture: "",
+    dateTime: "",
+    witnessContact: "",
   });
   const { sightings, addSighting } = useSightings();
   const router = useRouter();
@@ -41,7 +55,9 @@ const Index = () => {
           latitude: e.location.latitude,
           longitude: e.location.longitude,
         },
-        imageUri: e.imageUri || "",
+        picture: e.picture || "",
+        dateTime: e.dateTime,
+        witnessContact: e.witnessContact,
       }))
     );
   }, [sightings]);
@@ -86,7 +102,9 @@ const Index = () => {
         description: formData.description,
         status: formData.status,
         location: formLocation,
-        imageUri: formData.imageUri,
+        picture: formData.picture,
+        dateTime: formData.dateTime,
+        witnessContact: formData.witnessContact,
       };
       setPointsOfInterest([...pointsOfInterest, newSighting]);
       addSighting(newSighting);
@@ -94,7 +112,9 @@ const Index = () => {
         name: "",
         description: "",
         status: "unconfirmed",
-        imageUri: "",
+        picture: "",
+        dateTime: "",
+        witnessContact: "",
       });
       setFormVisible(false);
     }
@@ -124,7 +144,7 @@ const Index = () => {
     });
     if (!result.canceled) {
       const localUri = await storeImageLocally(result.assets[0].uri, true);
-      setFormData({ ...formData, imageUri: localUri });
+      setFormData({ ...formData, picture: localUri });
     }
     setImagePickerVisible(false);
   };
@@ -136,7 +156,7 @@ const Index = () => {
     });
     if (!result.canceled) {
       const localUri = await storeImageLocally(result.assets[0].uri, false);
-      setFormData({ ...formData, imageUri: localUri });
+      setFormData({ ...formData, picture: localUri });
     }
     setImagePickerVisible(false);
   };
@@ -159,9 +179,9 @@ const Index = () => {
             coordinate={point.location}
             onPress={() => handleMarkerPress(point)}
           >
-            {point.imageUri ? (
+            {point.picture ? (
               <Image
-                source={{ uri: point.imageUri }}
+                source={{ uri: point.picture }}
                 style={styles.markerImage}
               />
             ) : null}
@@ -191,9 +211,9 @@ const Index = () => {
                 <Text style={styles.description}>
                   "{selectedSighting.description}"
                 </Text>
-                {selectedSighting.imageUri && (
+                {selectedSighting.picture && (
                   <Image
-                    source={{ uri: selectedSighting.imageUri }}
+                    source={{ uri: selectedSighting.picture }}
                     style={styles.previewImageModal}
                   />
                 )}
@@ -271,6 +291,26 @@ const Index = () => {
             numberOfLines={4}
             textAlignVertical="top"
           />
+          <Text>Email:</Text>
+          <TextInput
+            style={styles.input}
+            value={formData.witnessContact}
+            onChangeText={(text) =>
+              setFormData({ ...formData, witnessContact: text })
+            }
+          />
+          <Text>Date: <Text style={styles.description}>{date.toDateString()}</Text></Text>
+          <Pressable style={[styles.button, {marginBottom: 15}]} onPress={() => setShow(true)} >
+            <Text style={styles.buttonText}>Select a date</Text>
+          </Pressable>
+          {show && (
+            <DateTimePicker
+              value={date}
+              mode="date"
+              display="spinner"
+              onChange={onChange}
+            />
+          )}
           <View style={styles.checkboxContainer}>
             <Text>Confirmed:</Text>
             <Pressable
@@ -288,8 +328,8 @@ const Index = () => {
               </Text>
             </Pressable>
           </View>
-          {formData.imageUri && (
-            <Image source={{ uri: formData.imageUri }} style={styles.previewImage} />
+          {formData.picture && (
+            <Image source={{ uri: formData.picture }} style={styles.previewImage} />
           )}
           <View style={styles.buttonContainer}>
             <Pressable

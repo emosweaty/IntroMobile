@@ -10,8 +10,10 @@ export interface Sighting {
         longitude: number;
     }
     description?: string;
+    picture?: string;
     status?: string;
-    imageUri?: string;
+    dateTime: string;
+    witnessContact: string;
 }
 interface SightingContextType {
     sightings: Sighting[];
