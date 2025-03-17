@@ -7,7 +7,7 @@ import { useSightings, Sighting } from "./SightingContext";
 import { FontAwesome } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import DateTimePicker from "@react-native-community/datetimepicker";
-
+import * as Location from 'expo-location';
 
 interface Location {
   latitude: number;
@@ -25,6 +25,8 @@ const Index = () => {
   const [show, setShow] = useState(false);
   const [emailValid, setEmailValid] = useState(true);
   const [errors, setErrors] = useState({ name: false, description: false, date: false });
+  const [addressModalVisible, setAddressModalVisible] = useState(false);
+  const [addressInput, setAddressInput] = useState("");
 
   const onChange = (event: any, selectedDate: any) => {
     setShow(false);
@@ -143,6 +145,18 @@ const Index = () => {
     }
   };
 
+  const getCurrentLocation = async () => {
+    const permissionResponse = await Location.requestForegroundPermissionsAsync();
+    if (permissionResponse.status !== "granted") {
+      Alert.alert("Permission denied", "Permission to access location was denied");
+      return;
+    }
+    let location = await Location.getCurrentPositionAsync({});
+    const { latitude, longitude } = location.coords;
+    setFormLocation({ latitude, longitude });
+    setFormVisible(true);
+  }
+
   const storeImageLocally = async (uri: string, useCopy: boolean = true): Promise<string> => {
     const dir = FileSystem.documentDirectory + "sightingImages";
     const fileName = `${Date.now()}.jpg`;
@@ -184,6 +198,39 @@ const Index = () => {
     setImagePickerVisible(false);
   };
 
+  const handeAdressSubmit = async () => {
+    try{
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addressInput)}`,
+        {
+          headers: {
+            "User-Agent": "YourAppName/1.0 (contact@yourdomain.com)",
+            "Accept": "application/json"
+          }
+        }
+      );
+  
+      if (!res.ok) {
+        Alert.alert("Error", "Failed to fetch address data.");
+        return;
+      }
+      const data = await res.json();
+      if (data && data.length > 0){
+        const lat = parseFloat(data[0].lat);
+        const lon = parseFloat(data[0].lon);
+
+        setFormLocation({latitude: lat, longitude: lon});
+        setAddressModalVisible(false);
+        setFormVisible(true);
+        setAddressInput("");
+      } else {
+        Alert.alert("Error", "Address not found. Please try another address.");
+      }
+    }catch (err){
+      console.log(err);
+    }
+  }
+
   return (
     <View style={styles.container}>
       <MapView
@@ -211,6 +258,43 @@ const Index = () => {
           </Marker>
         ))}
       </MapView>
+
+      <Pressable
+          style={[styles.closeButtonCommon, {backgroundColor: 'red', width: 50, height: 50}]}
+        onPress={()=> setAddressModalVisible(true)}>
+          <FontAwesome name="map-marker" size={35} color="white" />
+      </Pressable>
+
+      <Pressable
+        style={[styles.closeButtonCommon, {backgroundColor: 'red', width: 50, height: 50, marginTop: 60}]}
+        onPress={getCurrentLocation}>
+        <FontAwesome name="crosshairs" size={35} color="white" />
+      </Pressable>
+        
+      <Modal visible={addressModalVisible} transparent animationType="fade">
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={[styles.modalTitle, { color: "red" }]}>
+              Enter Address
+            </Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Type address here..."
+              value={addressInput}
+              onChangeText={(text) => setAddressInput(text)}
+            />
+              <Pressable style={styles.button} onPress={handeAdressSubmit}>
+                <Text style={styles.buttonText}>Submit</Text>
+              </Pressable>
+              <Pressable
+              style={styles.closeButtonCommon}
+              onPress={() => setAddressModalVisible(false)}
+            >
+              <Text style={styles.closeButtonText}>X</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
 
       <Modal visible={modalVisible} transparent animationType="fade">
         <View style={styles.modalContainer}>
