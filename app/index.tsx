@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { View,Button, Text, Pressable, StyleSheet, TextInput, Image, Modal, Animated } from "react-native";
+import { View,Button, Text, Pressable, StyleSheet, TextInput, Image, Modal, Animated, Alert } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
@@ -23,12 +23,14 @@ const Index = () => {
   const [formLocation, setFormLocation] = useState<Location | null>(null);
   const [date, setDate] = useState(new Date());
   const [show, setShow] = useState(false);
+  const [emailValid, setEmailValid] = useState(true);
+  const [errors, setErrors] = useState({ name: false, description: false });
 
   const onChange = (event: any, selectedDate: any) => {
     setShow(false);
     if (selectedDate) {
       setDate(selectedDate);
-      setFormData({ ...formData, dateTime: selectedDate })
+      setFormData({ ...formData, dateTime: selectedDate.toISOString() })
     }
   };
   const [formData, setFormData] = useState({
@@ -36,7 +38,7 @@ const Index = () => {
     description: "",
     status: "unconfirmed",
     picture: "",
-    dateTime: "",
+    dateTime: new Date().toISOString(),
     witnessContact: "",
   });
   const { sightings, addSighting } = useSightings();
@@ -94,7 +96,23 @@ const Index = () => {
     setModalVisible(true);
   };
 
+  const validateEmail = (text: string)=> {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    setEmailValid(emailRegex.test(text));
+    setFormData({...formData, witnessContact: text});
+  }
+
   const handleSubmit = () => {
+    let newErrors = {name: false, description: false};
+
+    if (!formData.name.trim()) { newErrors.name = true; }
+    if (!formData.description.trim()) { newErrors.description = true; }
+
+    setErrors(newErrors);
+
+    if(newErrors.name || newErrors.description || !emailValid){
+      return;
+    }
     if (formLocation) {
       const newSighting = {
         id: pointsOfInterest.length + 1,
@@ -113,7 +131,7 @@ const Index = () => {
         description: "",
         status: "unconfirmed",
         picture: "",
-        dateTime: "",
+        dateTime: new Date().toISOString(),
         witnessContact: "",
       });
       setFormVisible(false);
@@ -274,15 +292,15 @@ const Index = () => {
             style={[styles.modalTitle,{ color: "red", fontSize: 20, letterSpacing: 1 }]}>
             Add a new sighting
           </Text>
-          <Text>Name:</Text>
+          <Text style={[styles.label, errors.name && styles.errorText]}>Name:</Text>
           <TextInput
-            style={styles.input}
+            style={[styles.input, errors.name && styles.errorBorder]}
             value={formData.name}
             onChangeText={(text) => setFormData({ ...formData, name: text })}
           />
-          <Text>Description:</Text>
+          <Text style={[styles.label, errors.description && styles.errorText]}>Description:</Text>
           <TextInput
-            style={[styles.input, { height: 80 }]}
+            style={[styles.input, { height: 80 }, errors.description && styles.errorBorder]}
             value={formData.description}
             onChangeText={(text) =>
               setFormData({ ...formData, description: text })
@@ -291,13 +309,13 @@ const Index = () => {
             numberOfLines={4}
             textAlignVertical="top"
           />
-          <Text>Email:</Text>
+          <Text style={[styles.label, !emailValid && styles.errorText]}>Email:</Text>
           <TextInput
-            style={styles.input}
+            style={[styles.input, !emailValid && styles.errorBorder]}
             value={formData.witnessContact}
-            onChangeText={(text) =>
-              setFormData({ ...formData, witnessContact: text })
-            }
+            inputMode="email"
+            keyboardType="email-address"
+            onChangeText={validateEmail}
           />
           <Text>Date: <Text style={styles.description}>{date.toDateString()}</Text></Text>
           <Pressable style={[styles.button, {marginBottom: 15}]} onPress={() => setShow(true)} >
@@ -351,18 +369,9 @@ const Index = () => {
 export default Index;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  map: {
-    width: "100%",
-    height: "100%",
-  },
-  markerImage: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-  },
+  container: {flex: 1},
+  map: {width: "100%", height: "100%"},
+  markerImage: {width: 30, height: 30, borderRadius: 15},
   closeButtonCommon: {
     position: "absolute",
     top: 10,
@@ -375,10 +384,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     zIndex: 1,
   },
-  closeButtonText: {
-    fontWeight: "bold",
-    color: "white",
-  },
+  closeButtonText: {fontWeight: "bold", color: "white"},
   modalContainer: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.5)",
@@ -424,11 +430,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     marginTop: 5,
   },
-  checkboxContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 10,
-  },
+  checkboxContainer: { flexDirection: "row", alignItems: "center", marginBottom: 10},
   checkbox: {
     width: 20,
     height: 20,
@@ -438,14 +440,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 4,
   },
-  checked: {
-    backgroundColor: "red",
-    borderColor: "black",
-  },
-  unchecked: {
-    backgroundColor: "white",
-    borderColor: "#ccc",
-  },
+  checked: {backgroundColor: "red", borderColor: "black"},
+  unchecked: {backgroundColor: "white", borderColor: "#ccc"},
   checkboxText: {
     color: "white",
     fontWeight: "900",
@@ -482,8 +478,8 @@ const styles = StyleSheet.create({
     gap: 5,
     marginTop: 5,
   },
-  description: {
-    fontStyle: "italic",
-    fontFamily: "arial",
-  },
+  description: {fontStyle: "italic", fontFamily: "arial"},
+  errorBorder:{borderColor: 'red'},
+  errorText:{color: 'red'},
+  label:{fontSize: 15},
 });

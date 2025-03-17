@@ -31,7 +31,7 @@ export default function Details() {
       <Text style={styles.title}>Description</Text>
       <Text style={[styles.text, styles.italicText]}>"{detail?.description}"</Text>
       <Text style={styles.title}>Date</Text>
-      <Text style={[styles.text, styles.italicText]}>{new Date(Date.parse(detail?.dateTime!)).toDateString()}</Text>
+      <Text style={[styles.text, styles.italicText]}>{detail?.dateTime ? new Date(detail.dateTime).toDateString() : ""}</Text>
       <Text style={styles.title}>Location</Text>
       <Text style={styles.text}>
         {detail?.location
