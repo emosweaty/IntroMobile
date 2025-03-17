@@ -24,13 +24,14 @@ const Index = () => {
   const [date, setDate] = useState(new Date());
   const [show, setShow] = useState(false);
   const [emailValid, setEmailValid] = useState(true);
-  const [errors, setErrors] = useState({ name: false, description: false });
+  const [errors, setErrors] = useState({ name: false, description: false, date: false });
 
   const onChange = (event: any, selectedDate: any) => {
     setShow(false);
     if (selectedDate) {
       setDate(selectedDate);
-      setFormData({ ...formData, dateTime: selectedDate.toISOString() })
+      setFormData({ ...formData, dateTime: selectedDate.toISOString() });
+      setErrors((prev)=>({...prev, date: false}))
     }
   };
   const [formData, setFormData] = useState({
@@ -103,16 +104,20 @@ const Index = () => {
   }
 
   const handleSubmit = () => {
-    let newErrors = {name: false, description: false};
+    let newErrors = {name: false, description: false, date: false};
+    const currentDate = new Date();
+    const submittedDate = new Date(formData.dateTime);
 
     if (!formData.name.trim()) { newErrors.name = true; }
     if (!formData.description.trim()) { newErrors.description = true; }
+    if (submittedDate > currentDate) { newErrors.date = true; }
 
     setErrors(newErrors);
 
-    if(newErrors.name || newErrors.description || !emailValid){
+    if(newErrors.name || newErrors.description || !emailValid || newErrors.date){
       return;
     }
+   
     if (formLocation) {
       const newSighting = {
         id: pointsOfInterest.length + 1,
@@ -318,6 +323,7 @@ const Index = () => {
             onChangeText={validateEmail}
           />
           <Text>Date: <Text style={styles.description}>{date.toDateString()}</Text></Text>
+          {errors.date && <Text style={styles.errorText}>The date cannot be in the future.</Text>}
           <Pressable style={[styles.button, {marginBottom: 15}]} onPress={() => setShow(true)} >
             <Text style={styles.buttonText}>Select a date</Text>
           </Pressable>
