@@ -367,91 +367,94 @@ const Index = () => {
         </View>
       </Modal>
 
-      {formVisible && formLocation && (
-        <Animated.View
-          style={[styles.formContainer, { transform: [{ scale: formScaleAnim }] }]}
-        >
-          <Pressable
-            style={styles.closeButtonCommon}
-            onPress={() => setFormVisible(false)}
-          >
-            <Text style={styles.closeButtonText}>X</Text>
-          </Pressable>
-          <Text
-            style={[styles.modalTitle,{ color: "red", fontSize: 20, letterSpacing: 1 }]}>
-            Add a new sighting
-          </Text>
-          <Text style={[styles.label, errors.name && styles.errorText]}>Name:</Text>
-          <TextInput
-            style={[styles.input, errors.name && styles.errorBorder]}
-            value={formData.name}
-            onChangeText={(text) => setFormData({ ...formData, name: text })}
-          />
-          <Text style={[styles.label, errors.description && styles.errorText]}>Description:</Text>
-          <TextInput
-            style={[styles.input, { height: 80 }, errors.description && styles.errorBorder]}
-            value={formData.description}
-            onChangeText={(text) =>
-              setFormData({ ...formData, description: text })
-            }
-            multiline={true}
-            numberOfLines={4}
-            textAlignVertical="top"
-          />
-          <Text style={[styles.label, !emailValid && styles.errorText]}>Email:</Text>
-          <TextInput
-            style={[styles.input, !emailValid && styles.errorBorder]}
-            value={formData.witnessContact}
-            inputMode="email"
-            keyboardType="email-address"
-            onChangeText={validateEmail}
-          />
-          <Text>Date: <Text style={styles.description}>{date.toDateString()}</Text></Text>
-          {errors.date && <Text style={styles.errorText}>The date cannot be in the future.</Text>}
-          <Pressable style={[styles.button, {marginBottom: 15}]} onPress={() => setShow(true)} >
-            <Text style={styles.buttonText}>Select a date</Text>
-          </Pressable>
-          {show && (
-            <DateTimePicker
-              value={date}
-              mode="date"
-              display="spinner"
-              onChange={onChange}
-            />
-          )}
-          <View style={styles.checkboxContainer}>
-            <Text>Confirmed:</Text>
-            <Pressable
-              style={[styles.checkbox, formData.status === "confirmed" ? styles.checked : styles.unchecked]}
-              onPress={() =>
-                setFormData({
-                  ...formData,
-                  status:
-                    formData.status === "confirmed" ? "unconfirmed" : "confirmed",
-                })
-              }
+      <Modal visible={formVisible && !!formLocation} transparent animationType="fade">
+        <View style={styles.modalContainer}>
+            <Animated.View
+              style={[styles.formContainer, { transform: [{ scale: formScaleAnim }] }]}
             >
-              <Text style={styles.checkboxText}>
-                {formData.status === "confirmed" ? "\u2713" : ""}
+              <Pressable
+                style={styles.closeButtonCommon}
+                onPress={() => setFormVisible(false)}
+              >
+                <Text style={styles.closeButtonText}>X</Text>
+              </Pressable>
+              <Text
+                style={[styles.modalTitle,{ color: "red", fontSize: 20, letterSpacing: 1 }]}>
+                Add a new sighting
               </Text>
-            </Pressable>
+              <Text style={[styles.label, errors.name && styles.errorText]}>Name:</Text>
+              <TextInput
+                style={[styles.input, errors.name && styles.errorBorder]}
+                value={formData.name}
+                onChangeText={(text) => setFormData({ ...formData, name: text })}
+              />
+              <Text style={[styles.label, errors.description && styles.errorText]}>Description:</Text>
+              <TextInput
+                style={[styles.input, { height: 80 }, errors.description && styles.errorBorder]}
+                value={formData.description}
+                onChangeText={(text) =>
+                  setFormData({ ...formData, description: text })
+                }
+                multiline={true}
+                numberOfLines={4}
+                textAlignVertical="top"
+              />
+              <Text style={[styles.label, !emailValid && styles.errorText]}>Email:</Text>
+              <TextInput
+                style={[styles.input, !emailValid && styles.errorBorder]}
+                value={formData.witnessContact}
+                inputMode="email"
+                keyboardType="email-address"
+                onChangeText={validateEmail}
+              />
+              <Text>Date: <Text style={styles.description}>{date.toDateString()}</Text></Text>
+              {errors.date && <Text style={styles.errorText}>The date cannot be in the future.</Text>}
+              <Pressable style={[styles.button, {marginBottom: 15}]} onPress={() => setShow(true)} >
+                <Text style={styles.buttonText}>Select a date</Text>
+              </Pressable>
+              {show && (
+                <DateTimePicker
+                  value={date}
+                  mode="date"
+                  display="spinner"
+                  onChange={onChange}
+                />
+              )}
+              <View style={styles.checkboxContainer}>
+                <Text>Confirmed:</Text>
+                <Pressable
+                  style={[styles.checkbox, formData.status === "confirmed" ? styles.checked : styles.unchecked]}
+                  onPress={() =>
+                    setFormData({
+                      ...formData,
+                      status:
+                        formData.status === "confirmed" ? "unconfirmed" : "confirmed",
+                    })
+                  }
+                >
+                  <Text style={styles.checkboxText}>
+                    {formData.status === "confirmed" ? "\u2713" : ""}
+                  </Text>
+                </Pressable>
+              </View>
+              {formData.picture && (
+                <Image source={{ uri: formData.picture }} style={styles.previewImage} />
+              )}
+              <View style={styles.buttonContainer}>
+                <Pressable
+                  style={styles.button}
+                  onPress={() => setImagePickerVisible(true)}
+                >
+                  <FontAwesome name="camera" size={20} color="white" />
+                </Pressable>
+                <Pressable style={styles.button} onPress={handleSubmit}>
+                  <Text style={styles.buttonText}>Submit</Text>
+                </Pressable>
+              </View>
+            </Animated.View>
           </View>
-          {formData.picture && (
-            <Image source={{ uri: formData.picture }} style={styles.previewImage} />
-          )}
-          <View style={styles.buttonContainer}>
-            <Pressable
-              style={styles.button}
-              onPress={() => setImagePickerVisible(true)}
-            >
-              <FontAwesome name="camera" size={20} color="white" />
-            </Pressable>
-            <Pressable style={styles.button} onPress={handleSubmit}>
-              <Text style={styles.buttonText}>Submit</Text>
-            </Pressable>
-          </View>
-        </Animated.View>
-      )}
+        </Modal>
+      
     </View>
   );
 };
