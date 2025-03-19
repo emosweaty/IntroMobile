@@ -204,7 +204,7 @@ const Index = () => {
         `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addressInput)}`,
         {
           headers: {
-            "User-Agent": "YourAppName/1.0 (contact@yourdomain.com)",
+            "User-Agent": "UfoSighting/1.0 (contact@gmail.com)",
             "Accept": "application/json"
           }
         }
